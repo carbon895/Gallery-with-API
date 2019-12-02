@@ -4,13 +4,12 @@
       <div class="grid--block__container" v-for="user in users" :key = "user.id">
         <div class="profile--info">
             <img v-bind:src="user.user.profile_image.small" alt="avatar--block">
-            <div class="username--social">
+            <div class="username--social" @click="getAuthor(user.user.id)">
                 <p class="username--profile">{{ user.user.username }}</p>
                 <p class="inst--username--profile">@{{ user.user.instagram_username }}</p>
             </div>
         </div>
         <img class="image--profile" v-bind:src="user.urls.small" alt="image--block">
-        <!-- <userAll v-bind:userAll="user.user"></userAll> -->
         <div class="likes--profile"> 
           <p>{{ user.likes }}</p>
           <img src="../assets/Eye.png">
@@ -20,7 +19,6 @@
     <div class="pagination">
       <div class="pagination--block">
         <p> {{ counter }} </p>
-        <button @click="getLog">5555555</button>
       </div>
     </div>
   </div>
@@ -28,40 +26,30 @@
 
 <script>
 
-// import userAll from './userAll.vue'
-
 export default {
   name: 'gallery',
-  components: {
-    // userAll
-  },
   data() {
     return{
-      users: [],
-      url:  'https://api.unsplash.com/photos/?client_id=af3ec96790b516dbd635202f7b3104ef6226d6edd57fd7d99ef707fcf953ccb2',
       counter: 10
     }
   },
 
   methods: {
-    getUsers(){
-      // this.$axios.get(this.url)
-      //   .then((response) => {this.users = response})
-      //   // .then(function(response) { this.users = response })
-      this.$axios
-        .get(this.url)
-        .then(response => (this.users = response.data));
-    },
-
-    getLog(){
-      console.log(this.users)
+    getAuthor(user){
+      this.id = user
+      this.$router.push('gallery/' + this.id)
+      console.log(this.id)
     }
+  },
 
+  computed: {
+    users(){
+      return this.$store.getters.doneUsers;
+    }
   },
-  created:  function () {
-      this.getUsers();
-  },
-  mounted: function (){
+
+  mounted() {
+    this.$store.dispatch('getUsers');
   }
   
 }
@@ -117,6 +105,7 @@ export default {
     font-style: normal;
     position: relative;
     display: inherit;
+    margin: 0;
   }
 
   .username--profile{
